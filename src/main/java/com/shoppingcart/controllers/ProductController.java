@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -34,30 +32,30 @@ public class ProductController {
 	@GetMapping("/add")
 	public String showAddForm(Model model) {
 		model.addAttribute("product", new Product());
-		return "/products/formulario-producto";	//Busca en /templates/products/formulario-producto.html
+		return "products/formulario-producto";	//Busca en /templates/products/formulario-producto.html
 	}
 	
 	//Formulario para editar productos (GET /products/edit/id)
 	@GetMapping("/edit/{id}")
-	public String editProduct(@PathVariable("id") Long id, Model model) {	//PathVariable extrae el número de la url y lo asigna a id
+	public String editProduct(Long id, Model model) {	//PathVariable extrae el número de la url y lo asigna a id
 		Optional<Product> product = productService.getProductById(id);
 		if (product.isPresent()) {
 			model.addAttribute("product", product.get());
-			return "/products/form";
+			return "products/form";
 		}
 		return "redirect:/products"; //redirige a la lista de productos
 	}
 	
 	//Guardar un producto nuevo o editado (POST /products/save)
 	@PostMapping("/save")
-	public String saveProduct(@ModelAttribute("product") Product product) { //ModalAttribute coge los datos de la url
+	public String saveProduct(Product product) { //ModalAttribute coge los datos de la url
 		productService.saveProduct(product);
-		return ":redirect/products"; //redirige a la lista de productos
+		return "redirect:/products"; //redirige a la lista de productos
 	}
 	
 	//Eliminar un producto (POST /products/delete/id) 
 	@PostMapping("/delete/{id}")
-	public String deleteProduct(@PathVariable("id") Long id, Model model) {
+	public String deleteProduct(Long id, Model model) {
 		productService.deleteProduct(id);
 		return "redirect:/products";
 	}
