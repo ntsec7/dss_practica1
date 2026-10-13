@@ -43,7 +43,7 @@ public class ProductController {
 		Optional<Product> product = productService.getProductById(id);
 		if (product.isPresent()) {
 			model.addAttribute("product", product.get());
-			return "products/form";
+			return "products/formulario-producto";
 		}
 		return "redirect:/products"; //redirige a la lista de productos
 	}
