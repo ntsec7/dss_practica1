@@ -35,7 +35,7 @@ public class CartController {
 	public String addToCart(@PathVariable Long id) {
 		Optional<Product> product = productService.getProductById(id);
 		if(product.isPresent()) {
-			cartService.addProductToShoppingCart(product.get());
+			cartService.addProductToShoppingCart(id);
 		} 
 		return "redirect:/products";
 	}
@@ -45,7 +45,7 @@ public class CartController {
 	public String deleteFromCart(@PathVariable Long id) {
 		Optional<Product> product = productService.getProductById(id);
 		if(product.isPresent()) {
-			cartService.deleteProductFromShoppingCart(product.get());
+			cartService.deleteProductFromShoppingCart(id);
 		}
 		return "redirect:/cart";
 	}
