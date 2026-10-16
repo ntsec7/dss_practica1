@@ -9,6 +9,7 @@
     <title>Catálogo de Productos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
           rel="stylesheet">
+		  
 </head>
 
 <body>
@@ -42,7 +43,107 @@
             Exportar catálogo (SQL)
         </a>
     </div>
+	
+	<!-- Buscador y filtros -->
+	<div class="card shadow-sm mb-4">
+	    <div class="card-body">
 
+	        <form th:action="@{/products}" method="get">
+
+	            <!-- Buscador -->
+	            <div class="mb-4">
+	                <label for="keyword" class="form-label fw-semibold">
+	                    Buscar producto
+	                </label>
+
+	                <div class="input-group">
+	                    <input type="text"
+	                           class="form-control"
+	                           id="keyword"
+	                           name="keyword"
+	                           placeholder="Buscar producto..."
+	                           th:value="${keyword}">
+
+	                    <button type="submit"
+	                            class="btn btn-primary"
+	                            aria-label="Buscar producto"
+	                            title="Buscar">
+	                        <svg xmlns="http://www.w3.org/2000/svg"
+	                             width="20" height="20"
+	                             fill="none" viewBox="0 0 24 24"
+	                             stroke="currentColor"
+	                             stroke-width="2"
+	                             stroke-linecap="round"
+	                             stroke-linejoin="round"
+	                             aria-hidden="true">
+	                            <circle cx="11" cy="11" r="7"></circle>
+	                            <line x1="16.5" y1="16.5"
+	                                  x2="21" y2="21"></line>
+	                        </svg>
+	                    </button>
+	                </div>
+	            </div>
+
+				<!-- Precio mínimo -->
+				<div class="col-md-6">
+				    <label for="minPrice" class="form-label">
+				        Precio mínimo (€)
+				    </label>
+
+				    <input type="number"
+				           class="form-control"
+				           id="minPrice"
+				           name="minPrice"
+				           min="0"
+				           step="0.01"
+				           th:value="${minPrice}"
+				           required>
+				</div>
+
+				<!-- Precio máximo -->
+				<div class="col-md-6">
+				    <label for="maxPrice" class="form-label">
+				        Precio máximo (€)
+				    </label>
+
+				    <input type="number"
+				           class="form-control"
+				           id="maxPrice"
+				           name="maxPrice"
+				           min="0"
+				           step="0.01"
+				           th:value="${maxPrice}"
+				           required>
+				</div>
+
+				<!-- Mensaje de validación -->
+				<div class="col-12">
+				    <div id="priceError"
+				         class="text-danger small"
+				         role="alert"
+				         style="display: none;">
+				        El precio mínimo no puede ser mayor que el precio máximo.
+				    </div>
+				</div>
+
+	            <!-- Botones -->
+	            <div class="d-flex flex-wrap gap-2">
+	                <button type="submit" class="btn btn-primary">
+	                    Aplicar filtros
+	                </button>
+
+	                <a th:href="@{/products}"
+	                   class="btn btn-outline-secondary">
+	                    Limpiar filtros
+	                </a>
+	            </div>
+
+	        </form>
+
+	    </div>
+	</div>
+	
+	
     <!-- Catálogo -->
     <div class="row">
         <div th:each="product : ${products}" class="col-md-4">
@@ -111,5 +212,48 @@
     </div>
 
 </div>
+
+<script>	//comprueba que el precio mínimo sea menor que el máximo
+    const priceForm = document.querySelector(
+        'form[action$="/products"]'
+    );
+
+    const minPriceInput = document.getElementById('minPrice');
+    const maxPriceInput = document.getElementById('maxPrice');
+    const priceError = document.getElementById('priceError');
+
+    function validatePrices() {
+        const min = Number(minPriceInput.value);
+        const max = Number(maxPriceInput.value);
+
+        const invalid =
+            minPriceInput.value !== '' &&
+            maxPriceInput.value !== '' &&
+            min > max;
+
+        minPriceInput.setCustomValidity(
+            invalid ? 'El mínimo no puede superar al máximo.' : ''
+        );
+
+        maxPriceInput.setCustomValidity(
+            invalid ? 'El máximo debe ser mayor o igual que el mínimo.' : ''
+        );
+
+        priceError.style.display = invalid ? 'block' : 'none';
+
+        return !invalid;
+    }
+
+    minPriceInput.addEventListener('input', validatePrices);
+    maxPriceInput.addEventListener('input', validatePrices);
+
+    priceForm.addEventListener('submit', function (event) {
+        if (!validatePrices()) {
+            event.preventDefault();
+            minPriceInput.reportValidity();
+        }
+    });
+</script>
+
 </body>
 </html>

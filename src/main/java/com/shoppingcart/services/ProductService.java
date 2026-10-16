@@ -21,6 +21,14 @@ public class ProductService {
 		return productRepo.findAll();
 	}
 	
+	public List<Product> getProductsByNameAndPrice(String name, double min, double max){
+		return productRepo.findByNameContainingIgnoreCaseAndPriceBetween(name, min, max);
+	}
+	
+	public List<Product> getProductsByPrice(double min, double max){
+		return productRepo.findByPriceBetween(min, max);
+	}
+	
 	public Optional<Product> getProductById(Long id) {	//Optional por si el producto no existe
 		return productRepo.findById(id);
 	}
@@ -31,6 +39,10 @@ public class ProductService {
 	
 	public void deleteProduct(Long id) {
 		productRepo.deleteById(id);
+	}
+	
+	public double findMaxPrice() {
+		return productRepo.findMaxPrice();
 	}
 	
 	
